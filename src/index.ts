@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from 'express';
 import morgan from 'morgan';
 import * as dotenv from 'dotenv';
+import client from './database';
 
 dotenv.config();
 
@@ -13,13 +14,17 @@ app.use(morgan('short'));
 // add routing for / path
 app.get('/', (req: Request, res: Response) => {
   res.json({
-    message: 'Hello World 🌍'
+    message: 'Hello Server'
   });
 });
 
+client
+  .connect()
+  .then((y) => console.log({ y }))
+  .catch((err) => console.log({ err }));
 // start express server
 app.listen(PORT, () => {
-  console.log(`Server is starting at prot:${PORT}`);
+  console.log(`Server is starting at port:${PORT}`);
 });
 
 export default app;
