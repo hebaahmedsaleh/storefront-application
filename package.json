@@ -10,8 +10,7 @@
     "start": "npm run build && nodemon build/index.js",
     "format": "prettier --write 'src/**/*.{ts,tsx,js,jsx}'",
     "jasmine": "jasmine",
-    "test": "npm run build && npm run jasmine",
-    "test2": "ENV=test db-migrate --env test up && npm run build && npm run jasmine"
+    "test": "ENV=test db-migrate --env test up && jasmine-ts && db-migrate db:drop test"
   },
   "keywords": [],
   "author": "",

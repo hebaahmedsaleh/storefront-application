@@ -3,6 +3,8 @@ import morgan from 'morgan';
 import * as dotenv from 'dotenv';
 import client from './database';
 
+import userRoutes from './routes/user';
+
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
@@ -18,10 +20,12 @@ app.get('/', (req: Request, res: Response) => {
   });
 });
 
-client
-  .connect()
-  .then((y) => console.log({ y }))
-  .catch((err) => console.log({ err }));
+app.use('/api', userRoutes);
+
+// client
+//   .connect()
+//   .then((y) => console.log({ y }))
+//   .catch((err) => console.log({ err }));
 // start express server
 app.listen(PORT, () => {
   console.log(`Server is starting at port:${PORT}`);
