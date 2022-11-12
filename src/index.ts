@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 
 import userRoutes from './routes/user';
 import productRoutes from './routes/product';
+import orderRoutes from './routes/order';
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use(jsonParser);
 
 app.use('/api', userRoutes);
 app.use('/api', productRoutes);
+app.use('/api', orderRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is starting at port:${PORT}`);
