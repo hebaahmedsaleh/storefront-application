@@ -14,7 +14,7 @@ export class UserEntity {
   async index(): Promise<USER[]> {
     try {
       const connection = await Client.connect();
-      const sql = 'SELECT id, email, firstName, lastName, password FROM users';
+      const sql = 'SELECT id, email, firstName, lastName FROM users';
 
       const result = await connection.query(sql);
 
