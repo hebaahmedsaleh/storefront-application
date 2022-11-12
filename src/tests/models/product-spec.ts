@@ -61,7 +61,8 @@ describe('Product Model', () => {
   it('delete method should remove the Product', async () => {
     store.delete(1);
     const result = await store.show(1);
+    console.log({ result });
 
-    expect(result).toBeUndefined();
+    expect(result).not.toBeDefined();
   });
 });
