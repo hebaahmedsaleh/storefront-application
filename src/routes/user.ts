@@ -1,4 +1,6 @@
 import express, { Router, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
+
 import { UserEntity, USER } from '../models/user';
 
 const router: Router = express.Router();
@@ -39,10 +41,13 @@ router.post('/users', async (req: Request, res: Response) => {
     await store
       .create(user)
       .then((_res) => {
+        var token = jwt.sign({ user }, process.env.TOKEN_SECRET as string);
+
         res.json({
           statusCode: 200,
           message: 'user has been succesfully created.',
-          data: user
+          data: user,
+          token
         });
       })
       .catch(() => {
@@ -111,6 +116,29 @@ router.delete('/users/:id', async (_req: Request, res: Response) => {
   } catch (err) {
     res.status(400);
     res.json(err);
+  }
+});
+
+router.post('/users/authenticate', async (_req: Request, res: Response) => {
+  const { email, password }: { email: string; password: string } = _req.body;
+
+  try {
+    const loggedInUser = await store.authenticate(email, password);
+    const token = jwt.sign({ loggedInUser }, process.env.TOKEN_SECRET as unknown as string);
+    if (!loggedInUser) {
+      res.status(401).json({
+        status: 'error',
+        message: 'email or password or both are not exist.'
+      });
+    } else {
+      res.status(200).json({
+        status: 'successful login',
+        data: { token, user: loggedInUser }
+      });
+    }
+  } catch (err) {
+    res.status(401);
+    if (err) res.json(err + 'user');
   }
 });
 

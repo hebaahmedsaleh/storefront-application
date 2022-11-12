@@ -102,26 +102,31 @@ export class UserEntity {
     }
   }
 
-  async authenticate(username: string, password: string): Promise<USER | null> {
-    const conn = await Client.connect();
-    const sql = 'SELECT password FROM users WHERE username=($1)';
+  async authenticate(email: string, p: string): Promise<USER | null> {
+    try {
+      const conn = await Client.connect();
+      const sql = 'SELECT password FROM users WHERE email=($1)';
 
-    const { BCRYPT_PASSWORD, SALT_ROUNDS } = process.env;
+      const { BCRYPT_PASSWORD } = process.env;
 
-    const result = await conn.query(sql, [username]);
+      const result = await conn.query(sql, [email]);
+      if (result.rows.length) {
+        const { password } = result.rows[0];
 
-    if (BCRYPT_PASSWORD) console.log(password + BCRYPT_PASSWORD);
+        const isValid = bcrypt.compareSync(`${p}${BCRYPT_PASSWORD}`, password);
 
-    if (result.rows.length) {
-      const user = result.rows[0];
+        if (isValid) {
+          const sql = 'SELECT id, email, firstName, lastName FROM users WHERE email=($1)';
+          const result = await conn.query(sql, [email]);
 
-      console.log(user);
-
-      if (bcrypt.compareSync(password + BCRYPT_PASSWORD, user.password)) {
-        return user;
+          return result.rows[0];
+        }
       }
-    }
 
-    return null;
+      return null;
+    } catch (err) {
+      console.log({ err });
+      return null;
+    }
   }
 }
