@@ -1,55 +1,113 @@
 import express, { Router, Request, Response } from 'express';
-import { USER } from '../models//user';
+import { UserEntity, USER } from '../models/user';
 
 const router: Router = express.Router();
 
-router.get('/users', (_req: Request, res: Response) => {
+const store = new UserEntity();
+
+router.get('/users', async (_req: Request, res: Response) => {
   try {
-    res.send('this is the INDEX route');
+    const users = await store.index();
+    res.json(users);
+    // res.send('this is the INDEX route');
   } catch (err) {
     res.status(400);
     res.json(err);
   }
 });
 
-router.get('/users/:id', (_req: Request, res: Response) => {
+router.get('/users/:id', async (_req: Request, res: Response) => {
   try {
-    res.send('this is the SHOW route');
+    const user = await store.show(parseInt(_req.params.id, 10));
+    if (user) res.json(user);
+    else res.status(404).json('user not found');
   } catch (err) {
+    res.status(404);
+    res.json(err);
+  }
+});
+
+router.post('/users', async (req: Request, res: Response) => {
+  try {
+    const user: USER = {
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      password: req.body.password
+    };
+
+    await store
+      .create(user)
+      .then((_res) => {
+        res.json({
+          statusCode: 200,
+          message: 'user has been succesfully created.',
+          data: user
+        });
+      })
+      .catch(() => {
+        res.json({
+          statusCode: 400,
+          message: 'error has happened in creating user.'
+        });
+      });
+  } catch (err) {
+    res.json({
+      statusCode: 400,
+      message: 'error has happened.',
+      data: err
+    });
+  }
+});
+
+router.put('/users/:id', async (req: Request, res: Response) => {
+  try {
+    const user: USER = {
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email
+    };
+    await store
+      .update(user, parseInt(req.params.id, 10))
+      .then(() => {
+        res.json({
+          statusCode: 200,
+          message: 'user has been succesfully updated.',
+          data: user
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+
+        res.json({
+          statusCode: 400,
+          message: 'error has happened in updating user.'
+        });
+      });
+  } catch (err) {
+    console.log({ err });
+
     res.status(400);
     res.json(err);
   }
 });
 
-router.post('/users', (req: Request, res: Response) => {
-  console.log(req.body);
+router.delete('/users/:id', async (_req: Request, res: Response) => {
   try {
-    res.send('this is the CREATE route');
-  } catch (err) {
-    res.status(400);
-    res.json(err);
-  }
-});
-
-router.put('/users/:id', (req: Request, res: Response) => {
-  const user: USER = {
-    id: parseInt(req.params.id, 10),
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    email: req.body.email,
-    password: req.body.password
-  };
-  try {
-    res.send('this is the EDIT route');
-  } catch (err) {
-    res.status(400);
-    res.json(err);
-  }
-});
-
-router.delete('/users/:id', (_req: Request, res: Response) => {
-  try {
-    res.send('this is the DELETE route');
+    await store
+      .delete(parseInt(_req.params.id, 10))
+      .then(() => {
+        res.json({
+          statusCode: 200,
+          message: 'user has been succesfully deleted.'
+        });
+      })
+      .catch(() => {
+        res.json({
+          statusCode: 400,
+          message: 'error has happened in deleting user.'
+        });
+      });
   } catch (err) {
     res.status(400);
     res.json(err);

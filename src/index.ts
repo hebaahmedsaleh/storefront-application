@@ -1,32 +1,33 @@
 import express, { Application, Request, Response } from 'express';
 import morgan from 'morgan';
 import * as dotenv from 'dotenv';
-import client from './database';
+import bodyParser from 'body-parser';
 
 import userRoutes from './routes/user';
+import productRoutes from './routes/product';
 
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
-// create an instance server
+
 const app: Application = express();
-// HTTP request logger middleware
+const jsonParser = bodyParser.json();
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
+
 app.use(morgan('short'));
 
-// add routing for / path
 app.get('/', (req: Request, res: Response) => {
   res.json({
     message: 'Hello Server'
   });
 });
 
-app.use('/api', userRoutes);
+app.use(urlencodedParser);
+app.use(jsonParser);
 
-// client
-//   .connect()
-//   .then((y) => console.log({ y }))
-//   .catch((err) => console.log({ err }));
-// start express server
+app.use('/api', userRoutes);
+app.use('/api', productRoutes);
+
 app.listen(PORT, () => {
   console.log(`Server is starting at port:${PORT}`);
 });

@@ -26,13 +26,13 @@ describe('Product Model', () => {
   it('create method should add a Product', async () => {
     const result = await store.create({
       id: 1,
-      name: 'watch',
+      p_name: 'watch',
       price: 400,
       category: 'accesories'
     });
     expect(result).toEqual({
       id: 1,
-      name: 'watch',
+      p_name: 'watch',
       price: 400,
       category: 'accesories'
     });
@@ -43,7 +43,7 @@ describe('Product Model', () => {
     expect(result).toEqual([
       {
         id: 1,
-        name: 'watch',
+        p_name: 'watch',
         price: 400,
         category: 'accesories'
       }
@@ -54,7 +54,7 @@ describe('Product Model', () => {
     const result = await store.show(1);
     expect(result).toEqual({
       id: 1,
-      name: 'watch',
+      p_name: 'watch',
       price: 400,
       category: 'accesories'
     });

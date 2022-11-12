@@ -2,22 +2,22 @@
 import Client from '../database';
 
 export type USER = {
-  id: number;
   firstName: string;
   lastName: string;
   email: string;
-  password: string;
+  password?: string;
+  id?: number;
 };
 
 export class UserEntity {
   async index(): Promise<USER[]> {
     try {
-      const conn = await Client.connect();
-      const sql = 'SELECT * FROM users';
+      const connection = await Client.connect();
+      const sql = 'SELECT id, email, firstName, lastName FROM users';
 
-      const result = await conn.query(sql);
+      const result = await connection.query(sql);
 
-      conn.release();
+      connection.release();
 
       return result.rows;
     } catch (err) {
@@ -27,13 +27,13 @@ export class UserEntity {
 
   async show(id: number): Promise<USER> {
     try {
-      const sql = 'SELECT * FROM users WHERE id=($1)';
+      const sql = 'SELECT id, email, firstName, lastName FROM users WHERE id=($1)';
 
-      const conn = await Client.connect();
+      const connection = await Client.connect();
 
-      const result = await conn.query(sql, [id]);
+      const result = await connection.query(sql, [id]);
 
-      conn.release();
+      connection.release();
 
       return result.rows[0];
     } catch (err) {
@@ -44,11 +44,11 @@ export class UserEntity {
   async create(user: USER): Promise<USER> {
     try {
       const sql =
-        'INSERT INTO users (id, firstName, lastName, email, password) VALUES($1, $2, $3, $4) RETURNING *';
+        'INSERT INTO users (firstName, lastName, email, password) VALUES($1, $2, $3, $4) RETURNING id, firstName, lastName, email';
 
-      const conn = await Client.connect();
+      const connection = await Client.connect();
 
-      const result = await conn.query(sql, [
+      const result = await connection.query(sql, [
         user.firstName,
         user.lastName,
         user.email,
@@ -57,7 +57,7 @@ export class UserEntity {
 
       const userResult = result.rows[0];
 
-      conn.release();
+      connection.release();
 
       return userResult;
     } catch (err) {
@@ -65,16 +65,33 @@ export class UserEntity {
     }
   }
 
+  async update(user: USER, id: number): Promise<USER> {
+    try {
+      const sql = `UPDATE users SET firstName = $1, lastName = $2, email = $3 WHERE id = ${id} RETURNING id, firstName, lastName, email`;
+
+      const connection = await Client.connect();
+
+      const result = await connection.query(sql, [user.firstName, user.lastName, user.email]);
+
+      const userResult = result.rows[0];
+
+      connection.release();
+
+      return userResult;
+    } catch (err) {
+      throw new Error(`Could not add new USER ${user.firstName}. Error: ${err}`);
+    }
+  }
   async delete(id: number): Promise<USER> {
     try {
       const sql = 'DELETE FROM users WHERE id=($1)';
-      const conn = await Client.connect();
+      const connection = await Client.connect();
 
-      const result = await conn.query(sql, [id]);
+      const result = await connection.query(sql, [id]);
 
       const USER = result.rows[0];
 
-      conn.release();
+      connection.release();
 
       return USER;
     } catch (err) {
