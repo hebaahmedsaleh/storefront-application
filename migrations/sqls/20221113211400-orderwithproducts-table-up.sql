@@ -1,4 +1,4 @@
-CREATE TABLE order_products (   
+CREATE TABLE orderwithproducts (   
     id serial primary key, 
     quantity integer not null, 
     "order_id" integer DEFAULT NULL,   

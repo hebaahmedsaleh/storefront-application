@@ -59,7 +59,8 @@ CREATE TABLE products (
 - product_id
 - user_id
 
-```sqlCREATE TABLE orders (
+```sql
+CREATE TABLE orders (
     id serial primary key,
     order_status varchar(50) not null,
     quantity integer not null,

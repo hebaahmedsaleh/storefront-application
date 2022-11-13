@@ -10,7 +10,10 @@
     "start": "npm run build && nodemon build/index.js",
     "format": "prettier --write 'src/**/*.{ts,tsx,js,jsx}'",
     "jasmine": "jasmine",
-    "test": "ENV=test db-migrate --env test up && jasmine && db-migrate db:drop test"
+    "reset-db-test": "db-migrate reset -e dev",
+    "test": "ENV=test db-migrate --env test up && jasmine && db-migrate db:drop test",
+    "create-db-dev": "db-migrate --config database.json db:create storefront && db-migrate up -e dev",
+    "create-db-test": "db-migrate --config database.json db:create storefront_test"
   },
   "keywords": [],
   "author": "",

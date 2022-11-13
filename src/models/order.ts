@@ -12,17 +12,17 @@ export class OrderEntity {
   async index(): Promise<Order[]> {
     try {
       const conn = await Client.connect();
-      const sql = 'SELECT * FROM Orders';
+      const sql = 'SELECT * FROM orders';
       const result = await conn.query(sql);
       conn.release();
       return result.rows;
     } catch (err) {
-      throw new Error(`Could not get Orders. Error: ${err}`);
+      throw new Error(`Could not get orders. Error: ${err}`);
     }
   }
   async show(id: string): Promise<Order> {
     try {
-      const sql = 'SELECT * FROM Orders WHERE id=($1)';
+      const sql = 'SELECT * FROM orders WHERE id=($1)';
       const conn = await Client.connect();
       const result = await conn.query(sql, [id]);
       conn.release();
@@ -34,8 +34,10 @@ export class OrderEntity {
   async create(b: Order): Promise<Order> {
     try {
       const sql =
-        'INSERT INTO Orders (order_status, quantity, product_id, user_id) VALUES($1, $2, $3, $4) RETURNING *';
+        'INSERT INTO orders (order_status, quantity, product_id, user_id) VALUES($1, $2, $3, $4) RETURNING *';
 
+      const sql2 =
+        'INSERT INTO orderwithproducts (order_status, quantity, product_id, user_id) VALUES($1, $2, $3, $4) RETURNING *';
       const conn = await Client.connect();
       const result = await conn.query(sql, [b.order_status, b.quantity, b.product_id, b.user_id]);
       const Order = result.rows[0];
@@ -71,7 +73,7 @@ export class OrderEntity {
 
   async delete(id: string): Promise<Order> {
     try {
-      const sql = 'DELETE FROM Orders WHERE id=($1)';
+      const sql = 'DELETE FROM orders WHERE id=($1)';
       const conn = await Client.connect();
       const result = await conn.query(sql, [id]);
       const Order = result.rows[0];
