@@ -26,3 +26,8 @@ export const verifyAuthToken = (req: Request, res: Response, next: () => void) =
     res.status(401);
   }
 };
+
+const tokenSecret: string = process.env.TOKEN_SECRET as string;
+
+export const createJWTToken = (id: number, username: string): string =>
+  jwt.sign({ id, username }, tokenSecret);
