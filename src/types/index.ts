@@ -22,6 +22,7 @@ export type User = {
 };
 
 export type ProductOrder = {
+  id?: number;
   quantity: number;
   order_id: number;
   product_id: number;

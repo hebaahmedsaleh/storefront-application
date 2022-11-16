@@ -83,7 +83,7 @@ export class OrderEntity {
     }
   }
 
-  async addProductToOrder(product: ProductOrder): Promise<ProductOrder> {
+  async addProductToOrder(product: ProductOrder): Promise<ProductOrder | Error> {
     try {
       const sql =
         'INSERT INTO orderwithproducts (order_id, product_id, quantity) VALUES($1, $2, $3) RETURNING *';
@@ -98,7 +98,9 @@ export class OrderEntity {
 
       return result.rows[0];
     } catch (err) {
-      throw new Error(`Could not add product. Error: ${err}`);
+      console.log({ err });
+
+      return err as unknown as Error;
     }
   }
 }

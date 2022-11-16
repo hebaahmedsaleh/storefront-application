@@ -54,7 +54,7 @@ router.post('/orders', verifyAuthToken, async (req: Request, res: Response) => {
         });
       })
       .catch((e) => {
-        console.log(e);
+        console.log({ e });
 
         res.json({
           statusCode: 400,
@@ -70,15 +70,15 @@ router.post('/orders', verifyAuthToken, async (req: Request, res: Response) => {
   }
 });
 
-router.post('/orders/add', async (req: express.Request, res: express.Response) => {
+router.post('/orders/add', verifyAuthToken, async (req: express.Request, res: express.Response) => {
   try {
-    const order_id = parseInt(req.params.id);
+    const order_id = parseInt(req.body.product_id as string);
     const product_id = parseInt(req.body.product_id as string);
     const quantity = parseInt(req.body.quantity as string);
 
-    if (!order_id || !quantity || !product_id) {
+    if (!order_id || !product_id || !quantity) {
       return res.status(400).json({
-        error: 'missing required parameters'
+        error: 'Missing one or more required parameters'
       });
     }
 

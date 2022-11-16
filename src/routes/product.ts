@@ -29,7 +29,7 @@ router.get('/products/:pid', async (_req: Request, res: Response) => {
   }
 });
 
-router.post('/products', async (req: Request, res: Response) => {
+router.post('/products', verifyAuthToken, async (req: Request, res: Response) => {
   try {
     const Product: Product = {
       p_name: req.body.name,

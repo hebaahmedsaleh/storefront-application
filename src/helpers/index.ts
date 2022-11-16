@@ -20,7 +20,7 @@ export const verifyAuthToken = (req: Request, res: Response, next: () => void) =
         handleUnAuthorized(next);
       }
     } catch (e) {
-      console.log(e);
+      return e;
     }
   } catch (error) {
     res.status(401);

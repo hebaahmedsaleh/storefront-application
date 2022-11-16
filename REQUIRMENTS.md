@@ -29,6 +29,7 @@ These are the notes from a meeting with the frontend developer that describe wha
 - Create [token required] (POST `/api/orders`)
 - Update [token required] (PUT `/api/orders/:id`)
 - Delete [token required] (DELETE `/api/orders/:id`)
+- add product to order (POST `orders/add`)
 
 ## DataBASE SCHEMA
 
