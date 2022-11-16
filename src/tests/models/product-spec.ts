@@ -23,40 +23,55 @@ describe('Product Model', () => {
     expect(store.index).toBeDefined();
   });
 
-  // it('create method should add a Product', async () => {
-  //   const result = await store.create({
-  //     p_name: 'watch',
-  //     price: 400,
-  //     category: 'accesories'
-  //   });
-  //   expect(result).toEqual({
-  //     p_name: 'watch',
-  //     price: 400,
-  //     category: 'accesories'
-  //   });
-  // });
+  it('create method should add a Product', async () => {
+    const result = await store.create({
+      p_name: 'watch',
+      price: 400,
+      category: 'accesories'
+    });
 
-  // it('index method should return a list of Products', async () => {
-  //   const result = await store.index();
-  //   expect(result).toEqual([
-  //     {
-  //       pid: 1,
-  //       p_name: 'watch',
-  //       price: 400,
-  //       category: 'accesories'
-  //     }
-  //   ]);
-  // });
+    expect(result).toEqual({
+      p_name: 'watch',
+      price: 400,
+      category: 'accesories'
+    });
+  });
 
-  // it('show method should return the correct Product', async () => {
-  //   const result = await store.show(1);
-  //   expect(result).toEqual({
-  //     pid: 1,
-  //     p_name: 'watch',
-  //     price: 400,
-  //     category: 'accesories'
-  //   });
-  // });
+  it('create method should add a Product', async () => {
+    const result = await store.create({
+      p_name: 'watch',
+      price: 500,
+      category: 'accesories'
+    });
+
+    expect(result).toEqual({
+      p_name: 'watch',
+      price: 500,
+      category: 'accesories'
+    });
+  });
+
+  it('index method should return a list of Products', async () => {
+    const result = await store.index();
+    expect(result).toEqual([
+      {
+        pid: 1,
+        p_name: 'watch',
+        price: 400,
+        category: 'accesories'
+      }
+    ]);
+  });
+
+  it('show method should return the correct Product', async () => {
+    const result = await store.show(1);
+    expect(result).toEqual({
+      pid: 1,
+      p_name: 'watch',
+      price: 400,
+      category: 'accesories'
+    });
+  });
 
   it('delete method should remove the Product', async () => {
     store.delete(1);
