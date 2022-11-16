@@ -1,17 +1,10 @@
 import bcrypt from 'bcrypt';
 
 import Client from '../database';
-
-export type USER = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password?: string;
-  id?: number;
-};
+import { User } from '../types';
 
 export class UserEntity {
-  async index(): Promise<USER[]> {
+  async index(): Promise<User[]> {
     try {
       const connection = await Client.connect();
       const sql = 'SELECT id, email, firstName, lastName FROM users';
@@ -26,7 +19,7 @@ export class UserEntity {
     }
   }
 
-  async show(id: number): Promise<USER> {
+  async show(id: number): Promise<User> {
     try {
       const sql = 'SELECT id, email, firstName, lastName FROM users WHERE id=($1)';
 
@@ -38,11 +31,11 @@ export class UserEntity {
 
       return result.rows[0];
     } catch (err) {
-      throw new Error(`Could not find USER ${id}. Error: ${err}`);
+      throw new Error(`Could not find User ${id}. Error: ${err}`);
     }
   }
 
-  async create(user: USER): Promise<USER> {
+  async create(user: User): Promise<User> {
     try {
       const { BCRYPT_PASSWORD, SALT_ROUNDS } = process.env;
       const sql =
@@ -64,11 +57,11 @@ export class UserEntity {
 
       return userResult;
     } catch (err) {
-      throw new Error(`Could not add new USER ${user.firstName}. Error: ${err}`);
+      throw new Error(`Could not add new User ${user.firstName}. Error: ${err}`);
     }
   }
 
-  async update(user: USER, id: number): Promise<USER> {
+  async update(user: User, id: number): Promise<User> {
     try {
       const sql = `UPDATE users SET firstName = $1, lastName = $2, email = $3 WHERE id = ${id} RETURNING id, firstName, lastName, email`;
 
@@ -82,27 +75,27 @@ export class UserEntity {
 
       return userResult;
     } catch (err) {
-      throw new Error(`Could not add new USER ${user.firstName}. Error: ${err}`);
+      throw new Error(`Could not add new User ${user.firstName}. Error: ${err}`);
     }
   }
-  async delete(id: number): Promise<USER> {
+  async delete(id: number): Promise<User> {
     try {
       const sql = 'DELETE FROM users WHERE id=($1)';
       const connection = await Client.connect();
 
       const result = await connection.query(sql, [id]);
 
-      const USER = result.rows[0];
+      const User = result.rows[0];
 
       connection.release();
 
-      return USER;
+      return User;
     } catch (err) {
       throw new Error(`Could not delete user ${id}. Error: ${err}`);
     }
   }
 
-  async authenticate(email: string, p: string): Promise<USER | null> {
+  async authenticate(email: string, p: string): Promise<User | null> {
     try {
       const conn = await Client.connect();
       const sql = 'SELECT password FROM users WHERE email=($1)';

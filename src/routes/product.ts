@@ -1,12 +1,14 @@
 import express, { Router, Request, Response } from 'express';
 import { verifyAuthToken } from '../helpers';
-import { ProductEntity, Product } from '../models/product';
+import { ProductEntity } from '../models/product';
+
+import { Product } from '../types';
 
 const router: Router = express.Router();
 
 const store = new ProductEntity();
 
-router.get('/products', verifyAuthToken, async (_req: Request, res: Response) => {
+router.get('/products', async (_req: Request, res: Response) => {
   try {
     const products = await store.index();
     res.json(products);
@@ -16,7 +18,7 @@ router.get('/products', verifyAuthToken, async (_req: Request, res: Response) =>
   }
 });
 
-router.get('/products/:pid', verifyAuthToken, async (_req: Request, res: Response) => {
+router.get('/products/:pid', async (_req: Request, res: Response) => {
   try {
     const Product = await store.show(parseInt(_req.params.pid, 10));
     if (Product) res.json(Product);
@@ -27,7 +29,7 @@ router.get('/products/:pid', verifyAuthToken, async (_req: Request, res: Respons
   }
 });
 
-router.post('/products', verifyAuthToken, async (req: Request, res: Response) => {
+router.post('/products', async (req: Request, res: Response) => {
   try {
     const Product: Product = {
       p_name: req.body.name,

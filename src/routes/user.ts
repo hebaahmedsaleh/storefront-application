@@ -1,13 +1,15 @@
 import express, { Router, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
+import { verifyAuthToken } from '../helpers';
 
-import { UserEntity, USER } from '../models/user';
+import { UserEntity } from '../models/user';
+import { User } from '../types';
 
 const router: Router = express.Router();
 
 const store = new UserEntity();
 
-router.get('/users', async (_req: Request, res: Response) => {
+router.get('/users', verifyAuthToken, async (_req: Request, res: Response) => {
   try {
     const users = await store.index();
     res.json(users);
@@ -18,7 +20,7 @@ router.get('/users', async (_req: Request, res: Response) => {
   }
 });
 
-router.get('/users/:id', async (_req: Request, res: Response) => {
+router.get('/users/:id', verifyAuthToken, async (_req: Request, res: Response) => {
   try {
     const user = await store.show(parseInt(_req.params.id, 10));
     if (user) res.json(user);
@@ -31,7 +33,7 @@ router.get('/users/:id', async (_req: Request, res: Response) => {
 
 router.post('/users', async (req: Request, res: Response) => {
   try {
-    const user: USER = {
+    const user: User = {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       email: req.body.email,
@@ -65,9 +67,9 @@ router.post('/users', async (req: Request, res: Response) => {
   }
 });
 
-router.put('/users/:id', async (req: Request, res: Response) => {
+router.put('/users/:id', verifyAuthToken, async (req: Request, res: Response) => {
   try {
-    const user: USER = {
+    const user: User = {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       email: req.body.email
@@ -97,7 +99,7 @@ router.put('/users/:id', async (req: Request, res: Response) => {
   }
 });
 
-router.delete('/users/:id', async (_req: Request, res: Response) => {
+router.delete('/users/:id', verifyAuthToken, async (_req: Request, res: Response) => {
   try {
     await store
       .delete(parseInt(_req.params.id, 10))

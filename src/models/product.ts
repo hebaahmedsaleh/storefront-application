@@ -1,11 +1,5 @@
 import Client from '../database';
-
-export type Product = {
-  p_name: string;
-  price: number;
-  category?: string;
-  pid?: number;
-};
+import { Product } from '../types';
 
 export class ProductEntity {
   async index(): Promise<Product[]> {

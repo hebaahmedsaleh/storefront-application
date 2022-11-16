@@ -1,6 +1,7 @@
 import express, { Router, Request, Response } from 'express';
 import { verifyAuthToken } from '../helpers';
-import { OrderEntity, Order } from '../models/order';
+import { OrderEntity } from '../models/order';
+import { Order } from '../types';
 
 const router: Router = express.Router();
 
@@ -40,6 +41,12 @@ router.post('/orders', verifyAuthToken, async (req: Request, res: Response) => {
     await store
       .create(Order)
       .then((_res) => {
+        console.log({ _res });
+
+        // if(product_id) {
+        //   await store.addProductToOrder()
+
+        // }
         res.json({
           statusCode: 200,
           message: 'Order has been succesfully created.',
@@ -60,6 +67,30 @@ router.post('/orders', verifyAuthToken, async (req: Request, res: Response) => {
       message: 'error has happened.',
       data: err
     });
+  }
+});
+
+router.post('/orders/add', async (req: express.Request, res: express.Response) => {
+  try {
+    const order_id = parseInt(req.params.id);
+    const product_id = parseInt(req.body.product_id as string);
+    const quantity = parseInt(req.body.quantity as string);
+
+    if (!order_id || !quantity || !product_id) {
+      return res.status(400).json({
+        error: 'missing required parameters'
+      });
+    }
+
+    const product = await store.addProductToOrder({
+      order_id,
+      product_id,
+      quantity
+    });
+
+    res.status(200).json(product);
+  } catch (e) {
+    res.json({ json: e });
   }
 });
 
@@ -91,8 +122,6 @@ router.put('/orders/id', verifyAuthToken, async (req: Request, res: Response) =>
         });
       });
   } catch (err) {
-    console.log({ err });
-
     res.status(400);
     res.json(err);
   }
