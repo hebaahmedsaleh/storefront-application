@@ -4,7 +4,7 @@ import Client from '../database';
 import { User } from '../types';
 
 export class UserEntity {
-  async index(): Promise<User[]> {
+  async index(): Promise<User[] | Error> {
     try {
       const connection = await Client.connect();
       const sql = 'SELECT id, email, firstName, lastName FROM users';
@@ -15,11 +15,12 @@ export class UserEntity {
 
       return result.rows;
     } catch (err) {
-      throw new Error(`Could not get users. Error: ${err}`);
+      const error = new Error(`Could not get users. Error: ${err}`);
+      return error as unknown as Error;
     }
   }
 
-  async show(id: number): Promise<User> {
+  async show(id: number): Promise<User | Error> {
     try {
       const sql = 'SELECT id, email, firstName, lastName FROM users WHERE id=($1)';
 
@@ -31,11 +32,12 @@ export class UserEntity {
 
       return result.rows[0];
     } catch (err) {
-      throw new Error(`Could not find User ${id}. Error: ${err}`);
+      const error = new Error(`Could not find User ${id}. Error: ${err}`);
+      return error as unknown as Error;
     }
   }
 
-  async create(user: User): Promise<User> {
+  async create(user: User): Promise<User | Error> {
     try {
       const { BCRYPT_PASSWORD, SALT_ROUNDS } = process.env;
       const sql =
@@ -57,11 +59,12 @@ export class UserEntity {
 
       return userResult;
     } catch (err) {
-      throw new Error(`Could not add new User ${user.firstName}. Error: ${err}`);
+      const error = new Error(`Could not add new User ${user.firstName}. Error: ${err}`);
+      return error as unknown as Error;
     }
   }
 
-  async update(user: User, id: number): Promise<User> {
+  async update(user: User, id: number): Promise<User | Error> {
     try {
       const sql = `UPDATE users SET firstName = $1, lastName = $2, email = $3 WHERE id = ${id} RETURNING id, firstName, lastName, email`;
 
@@ -75,10 +78,11 @@ export class UserEntity {
 
       return userResult;
     } catch (err) {
-      throw new Error(`Could not add new User ${user.firstName}. Error: ${err}`);
+      const error = new Error(`Could not add new User ${user.firstName}. Error: ${err}`);
+      return error as unknown as Error;
     }
   }
-  async delete(id: number): Promise<User> {
+  async delete(id: number): Promise<User | Error> {
     try {
       const sql = 'DELETE FROM users WHERE id=($1)';
       const connection = await Client.connect();
@@ -91,7 +95,8 @@ export class UserEntity {
 
       return User;
     } catch (err) {
-      throw new Error(`Could not delete user ${id}. Error: ${err}`);
+      const error = new Error(`Could not delete user ${id}. Error: ${err}`);
+      return error as unknown as Error;
     }
   }
 

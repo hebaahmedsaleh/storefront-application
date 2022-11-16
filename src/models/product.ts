@@ -2,7 +2,7 @@ import Client from '../database';
 import { Product } from '../types';
 
 export class ProductEntity {
-  async index(): Promise<Product[]> {
+  async index(): Promise<Product[] | Error> {
     try {
       const conn = await Client.connect();
       const sql = 'SELECT * FROM products';
@@ -13,11 +13,12 @@ export class ProductEntity {
 
       return result.rows;
     } catch (err) {
-      throw new Error(`Could not get products. Error: ${err}`);
+      const error = new Error(`Could not get product. Error: ${err}`);
+      return error as unknown as Error;
     }
   }
 
-  async show(pid: number): Promise<Product> {
+  async show(pid: number): Promise<Product | Error> {
     try {
       const sql = 'SELECT * FROM products WHERE pid=($1)';
 
@@ -29,11 +30,12 @@ export class ProductEntity {
 
       return result.rows[0];
     } catch (err) {
-      throw new Error(`Could not find product ${pid}. Error: ${err}`);
+      const error = new Error(`Could not find product ${pid}. Error: ${err}`);
+      return error as unknown as Error;
     }
   }
 
-  async create(product: Product): Promise<Product> {
+  async create(product: Product): Promise<Product | Error> {
     try {
       const sql = 'INSERT INTO products (p_name, price, category) VALUES($1, $2, $3) RETURNING *';
 
@@ -47,11 +49,12 @@ export class ProductEntity {
 
       return productResult;
     } catch (err) {
-      throw new Error(`Could not add new product ${product.p_name}. Error: ${err}`);
+      const error = new Error(`Could not add new product ${product.p_name}. Error: ${err}`);
+      return error as unknown as Error;
     }
   }
 
-  async update(product: Product, pid: number): Promise<Product> {
+  async update(product: Product, pid: number): Promise<Product | Error> {
     try {
       const sql = `UPDATE products SET p_name = $1, price = $2, category = $3 WHERE pid = ${pid} RETURNING pid, p_name, price, category`;
 
@@ -69,11 +72,12 @@ export class ProductEntity {
 
       return userResult;
     } catch (err) {
-      throw new Error(`Could not add new prod ${product.p_name}. Error: ${err}`);
+      const error = new Error(`Could not add new prod ${product.p_name}. Error: ${err}`);
+      return error as unknown as Error;
     }
   }
 
-  async delete(pid: number): Promise<Product> {
+  async delete(pid: number): Promise<Product | Error> {
     try {
       const sql = 'DELETE FROM products WHERE pid=($1)';
       const conn = await Client.connect();
@@ -86,7 +90,8 @@ export class ProductEntity {
 
       return product;
     } catch (err) {
-      throw new Error(`Could not delete product ${pid}. Error: ${err}`);
+      const error = new Error(`Could not delete product ${pid}. Error: ${err}`);
+      return error as unknown as Error;
     }
   }
 }

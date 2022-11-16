@@ -3,7 +3,7 @@ import Client from '../database';
 import { Order, ProductOrder } from '../types';
 
 export class OrderEntity {
-  async index(): Promise<Order[]> {
+  async index(): Promise<Order[] | Error> {
     try {
       const connection = await Client.connect();
       const sql = 'SELECT * FROM orders';
@@ -11,10 +11,11 @@ export class OrderEntity {
       connection.release();
       return result.rows;
     } catch (err) {
-      throw new Error(`Could not get orders. Error: ${err}`);
+      const error = new Error(`Could not get orders. Error: ${err}`);
+      return error as unknown as Error;
     }
   }
-  async show(id: string): Promise<Order> {
+  async show(id: string): Promise<Order | Error> {
     try {
       const sql = 'SELECT * FROM orders WHERE id=($1)';
       const connection = await Client.connect();
@@ -22,10 +23,11 @@ export class OrderEntity {
       connection.release();
       return result.rows[0];
     } catch (err) {
-      throw new Error(`Could not find Order ${id}. Error: ${err}`);
+      const error = new Error(`Could not find Order ${id}. Error: ${err}`);
+      return error as unknown as Error;
     }
   }
-  async create(b: Order): Promise<Order> {
+  async create(b: Order): Promise<Order | Error> {
     try {
       const sql =
         'INSERT INTO orders (order_status, quantity, product_id, user_id) VALUES($1, $2, $3, $4) RETURNING *';
@@ -43,11 +45,13 @@ export class OrderEntity {
       connection.release();
       return Order;
     } catch (err) {
-      throw new Error(`Could not add new Order Error: ${err}`);
+      const error = new Error(`Could not add new Order Error: ${err}`);
+
+      return error as unknown as Error;
     }
   }
 
-  async update(order: Order, id: number): Promise<Order> {
+  async update(order: Order, id: number): Promise<Order | Error> {
     try {
       const sql = `UPDATE orders SET order_status = $1, quantity = $2, product_id = $3, user_id= $4 WHERE id = ${id} RETURNING pid, p_name, price, category`;
 
@@ -66,11 +70,13 @@ export class OrderEntity {
 
       return order_res;
     } catch (err) {
-      throw new Error(`Could not add new prod ${order.id}. Error: ${err}`);
+      const error = new Error(`Could not add new prod ${order.id}. Error: ${err}`);
+
+      return error as unknown as Error;
     }
   }
 
-  async delete(id: string): Promise<Order> {
+  async delete(id: string): Promise<Order | Error> {
     try {
       const sql = 'DELETE FROM orders WHERE id=($1)';
       const connection = await Client.connect();
@@ -79,7 +85,9 @@ export class OrderEntity {
       connection.release();
       return Order;
     } catch (err) {
-      throw new Error(`Could not delete Order ${id}. Error: ${err}`);
+      const error = new Error(`Could not delete Order ${id}. Error: ${err}`);
+
+      return error as unknown as Error;
     }
   }
 
