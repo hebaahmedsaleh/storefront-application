@@ -126,6 +126,7 @@ router.post('/users/authenticate', async (_req: Request, res: Response) => {
 
   try {
     const loggedInUser = await store.authenticate(email, password);
+
     const token = jwt.sign({ loggedInUser }, process.env.TOKEN_SECRET as unknown as string);
     if (!loggedInUser) {
       res.status(401).json({

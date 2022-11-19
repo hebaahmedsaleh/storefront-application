@@ -41,12 +41,6 @@ router.post('/orders', verifyAuthToken, async (req: Request, res: Response) => {
     await store
       .create(Order)
       .then((_res) => {
-        console.log({ _res });
-
-        // if(product_id) {
-        //   await store.addProductToOrder()
-
-        // }
         res.json({
           statusCode: 200,
           message: 'Order has been succesfully created.',

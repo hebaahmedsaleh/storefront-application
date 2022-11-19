@@ -12,7 +12,6 @@ export const verifyAuthToken = (req: Request, res: Response, next: () => void) =
     const token = authorizationHeader?.split(' ')[1];
     try {
       const decoded = token && jwt.verify(token, process.env.TOKEN_SECRET as string);
-      console.log('heba', token, process.env.TOKEN_SECRET, decoded);
 
       if (decoded) {
         next();
@@ -27,7 +26,5 @@ export const verifyAuthToken = (req: Request, res: Response, next: () => void) =
   }
 };
 
-const tokenSecret: string = process.env.TOKEN_SECRET as string;
-
 export const createJWTToken = (id: number, username: string): string =>
-  jwt.sign({ id, username }, tokenSecret);
+  jwt.sign({ id, username }, process.env.TOKEN_SECRET as string);
